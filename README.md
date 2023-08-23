@@ -69,4 +69,3 @@ This project focuses on building a single-page, responsive application that supp
 ### Wireframes
 
 You can download wireframes for each of the views for your project [here](MYFLIX_PROJECT_WIREFRAMES.zip).
-
