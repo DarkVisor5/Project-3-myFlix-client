@@ -8,8 +8,19 @@ export const SignupView = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    if(password.length <6){
+      alert("Password must be at least 6 characters long.");
+      return;
+    }
+
     const data = {
-      username: username, // make sure these keys match what your API is expecting
+      username: username,
       password: password,
       email: email,
       birthday: birthday,

@@ -10,8 +10,11 @@ export const MainView = () => {
   const [selectedMovies, setSelectedMovies] = useState(null);
 
   useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
+    const jwt = localStorage.getItem('AlGoriThm!');
     // If the user is logged in, fetch movies
+    if(jwt){
+      setUser('existingUser');
+    }
     if(jwt) {
       fetch("https://testmovieapi.onrender.com/movies", {
         headers: {
@@ -39,7 +42,7 @@ export const MainView = () => {
 
   // Function to logout
   const logout = () => {
-    localStorage.removeItem('jwt');
+    localStorage.removeItem('AlGoriThm!');
     setUser(null);
   };
 

@@ -29,7 +29,7 @@ export const LoginView = ({ onLoggedIn }) => {
     .then(response => response.json())
     .then(data => {
       if (data.token) {
-        localStorage.setItem('jwt', data.token);  // Storing JWT token
+        localStorage.setItem('AlGoriThm!', data.token);
         onLoggedIn(username);
       } else {
         alert("Login failed");
