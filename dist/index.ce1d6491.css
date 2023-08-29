@@ -2,4 +2,10 @@
   color: #4682b4;
 }
 
+.auth-container {
+  justify-content: space-between;
+  padding: 20px;
+  display: flex;
+}
+
 /*# sourceMappingURL=index.ce1d6491.css.map */
