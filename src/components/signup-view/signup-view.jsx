@@ -96,6 +96,8 @@ export const SignupView = () => {
           Submit
         </Button>
       </Form>
+      <p>Did you signup? <a href="/login">Signin here </a></p>
+      
     </Col>
   );
 };

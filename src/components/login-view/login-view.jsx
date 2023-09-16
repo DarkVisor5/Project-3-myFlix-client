@@ -1,25 +1,26 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import { Button, Form, Col } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 
 export const LoginView = ({ onLoggedIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  
     // Form validation
     if (!username || !password) {
       alert("All fields are required!");
       return;
     }
-
+  
     const data = {
       username: username,
       password: password,
     };
-
+  
     // Fetch for logging in
     fetch("https://testmovieapi.onrender.com/login", {
       method: "POST",
@@ -30,18 +31,25 @@ export const LoginView = ({ onLoggedIn }) => {
     })
     .then(response => response.json())
     .then(data => {
-      if (data.token) {
-        localStorage.setItem('AlGoriThm!', data.token);
-        onLoggedIn(username);
+      console.log("Login response: ",data);
+      if (data.user && data.token) {
+        if(!data.user.FavouriteMovies) {
+          data.user.FavouriteMovies = [];
+        }
+        localStorage.setItem('token', data.token);
+        onLoggedIn(data.user, data.token);
       } else {
-        alert("Login failed");
+        alert(data.message || "Login failed");
       }
     })
     .catch(error => {
-      console.error("Error:", error);
-      alert("An error occurred while logging in.");
+      console.error("There was an error logging in:", error);
     });
   };
+
+  const goToSignup = () => {
+    navigate('/signup');
+  }
 
   return (
     <Col md={5}>
@@ -69,6 +77,9 @@ export const LoginView = ({ onLoggedIn }) => {
           Submit
         </Button>
       </Form>
+      <p>You don't have an account?
+        <Button variant="link" onClick={goToSignup}> Signup here </Button>
+      </p>
     </Col>
   );
 };

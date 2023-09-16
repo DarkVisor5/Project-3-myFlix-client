@@ -1,8 +1,17 @@
+import { useParams, Link } from "react-router-dom";
+import PropTypes from "prop-types";
 import "./movie-view.scss";
 import { Container, Row, Col } from 'react-bootstrap';
-import PropTypes from 'prop-types';
 
-export const MovieView = ({ movie, onBackClick }) => {
+export const MovieView = ({ movies, onBackClick }) => {
+  const { movieId } = useParams();
+
+  const movie = movies.find((m) => m._id === movieId);
+
+  if(!movie){
+    return <div>Movie not found</div>
+  }
+
   return (
     <Container>
       <Row className="justify-content-md-center">
@@ -27,7 +36,9 @@ export const MovieView = ({ movie, onBackClick }) => {
               <span>Description: </span>
               <span>{movie.description}</span>
             </div>
-            <button onClick={onBackClick} className="back-button">Back</button>
+            <Link to={`/`}>
+              <button className="back-button">Back</button>
+            </Link>
           </div>
         </Col>
       </Row>
@@ -36,6 +47,5 @@ export const MovieView = ({ movie, onBackClick }) => {
 };
 
 MovieView.propTypes = {
-  movie: PropTypes.object.isRequired,
-  onBackClick: PropTypes.func.isRequired,
+  movies: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
