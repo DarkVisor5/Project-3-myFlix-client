@@ -25,17 +25,7 @@ export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => 
       email,
       dob,
     };
-    
-    const updateUser = (updatedUser) => {
-      const newUser = {
-        ...user,
-        ...updatedUser
-      };
-      if (!newUser.favoriteMovies) {
-        newUser.favoriteMovies = [];
-      }
-      setUser(newUser);
-    };
+  
     fetch(`https://testmovieapi.onrender.com/users/${user.username}`, {
       method: 'PUT',
       headers: {
@@ -47,7 +37,18 @@ export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => 
     .then(response => response.json())
     .then(data => {
       console.log('User updated:', data);
-      updateUser(data);
+      
+    
+      fetch(`https://testmovieapi.onrender.com/users/${user.username}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => response.json())
+      .then(completeUserData => {
+        console.log('Complete user data:', completeUserData);
+        updateUser(completeUserData);
+      });
     })
     .catch(error => console.log('Error updating user:', error));
   };

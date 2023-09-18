@@ -66,23 +66,6 @@ export const MainView = () => {
   },[token]);
 
   console.log("Current user: ", user);
-  if (!user) {
-    return (
-      <LoginView
-        onLoggedIn={(loggedInUser, loggedInToken) => {
-          if (!loggedInUser.favoriteMovies) {
-            loggedInUser.favoriteMovies = [];
-          }
-          setUser(loggedInUser);
-          setToken(loggedInToken);
-  
-          // Save user and token to localStorage
-          localStorage.setItem('token', loggedInToken);
-          localStorage.setItem('user', JSON.stringify(loggedInUser));
-        }}
-      />
-    );
-  }
 
   const logOut = () => {
     setUser(null);
@@ -106,6 +89,17 @@ export const MainView = () => {
     .catch(error => console.log('Error adding to favorites:', error));
   };
   
+  const handleLogin = (loggedInUser, loggedInToken) => {
+    if (!loggedInUser.favoriteMovies) {
+      loggedInUser.favoriteMovies = [];
+    }
+    setUser(loggedInUser);
+    setToken(loggedInToken);
+  
+    localStorage.setItem('token', loggedInToken);
+    localStorage.setItem('user', JSON.stringify(loggedInUser));
+  }
+  
   return (
     <BrowserRouter>
       <NavigationBar
@@ -123,9 +117,10 @@ export const MainView = () => {
           <Route
             path="/login"
             element={
-              user ? <Navigate to="/" /> : <Col md={5}><LoginView onLoggedIn={(user, token) => { setUser(user); setToken(token); }} /></Col>
-            }
+            user ? <Navigate to="/" /> : <Col md={5}><LoginView onLoggedIn={handleLogin} /></Col>
+          }
           />
+
           <Route
             path="/movies/:movieId"
             element={

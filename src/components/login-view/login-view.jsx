@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import { Button, Form, Col } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export const LoginView = ({ onLoggedIn }) => {
+  const navigate = useNavigate();
+  console.log("navigate function: ", navigate);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -48,8 +51,10 @@ export const LoginView = ({ onLoggedIn }) => {
   };
 
   const goToSignup = () => {
+    console.log("Navigating to Signup");
     navigate('/signup');
-  }
+  };
+  
 
   return (
     <Col md={5}>

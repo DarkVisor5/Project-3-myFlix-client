@@ -45,7 +45,7 @@ export const SignupView = () => {
       })
       .then((data) => {
         alert("Signup successful");
-        window.location.reload();
+        navigate('/login');
       })
       .catch((error) => {
         console.error("An error occurred:", error);
