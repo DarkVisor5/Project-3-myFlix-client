@@ -3,14 +3,25 @@ import PropTypes from "prop-types";
 import { Button, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-export const MovieCard = ({ movie, onAddToFavorites, initialIsFavorite }) => {
-  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+export const MovieCard = ({ movie, onAddToFavorites, onRemoveFromFavorites, initialIsFavorite }) => {
+  console.log('Is this movie a favorite?', initialIsFavorite);
+  const [isFavorite, setIsFavorite] = useState(initialIsFavorite || false);
 
-  const handleAddToFavorites = (title) => {
+  // This effect runs when initialIsFavorite changes and syncs it to the component state
+  useEffect(() => {
+    setIsFavorite(initialIsFavorite);
+  }, [initialIsFavorite]);
+
+  const toggleFavorite = (movieId) => {
+    if (isFavorite) {
+      onRemoveFromFavorites(movieId);
+    } else {
+      onAddToFavorites(movieId);
+    }
     setIsFavorite(!isFavorite);
-    onAddToFavorites(title);
   };
-
+  
+  
   return (
     <Card className="h-100">
       <Card.Img variant="Top" src={movie.image_url} />
@@ -23,11 +34,13 @@ export const MovieCard = ({ movie, onAddToFavorites, initialIsFavorite }) => {
           <Button variant="link">Open</Button>
         </Link>
         <Button
-        variant={isFavorite ? "danger" : "primary"}
-        onClick={() => handleAddToFavorites(movie.title)}
-      >
-        &hearts; {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-      </Button>
+          variant={isFavorite ? "danger" : "primary"}
+          onClick={() => toggleFavorite(movie._id)}  // Using the new method name
+        >
+          &hearts; {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+        </Button>
+
+
       </Card.Body>
     </Card>
   );
@@ -43,5 +56,6 @@ MovieCard.propTypes = {
     image_url: PropTypes.string.isRequired
   }).isRequired,
   onAddToFavorites: PropTypes.func.isRequired,
+  onRemoveFromFavorites: PropTypes.func.isRequired,
   initialIsFavorite: PropTypes.bool
 };

@@ -18,6 +18,24 @@ export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => 
   : [];
   console.log('Computed favoriteMovies:', favoriteMovies);
 
+  // Add this useEffect in your ProfileView component
+  useEffect(() => {
+    if (!token || !user?.username) return;
+
+    fetch(`https://testmovieapi.onrender.com/users/${user.username}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Fetched user data:', data);
+      updateUser(data);
+      localStorage.setItem('user', JSON.stringify(data));
+    })
+    .catch((error) => {
+      console.error("There was an error fetching the user:", error);
+    });
+  }, [token, user?.username, updateUser]);
+
   const handleUpdate = () => {
     const updatedUser = {
       username,
@@ -135,11 +153,13 @@ export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => 
           favoriteMovies.map((movie) => (
             <Col xs={6} md={4} lg={3} key={movie._id}> 
               <div style={{ height: '300px', overflowY: 'auto' }}>
-                <MovieCard 
-                  movie={movie} 
-                  onAddToFavorites={removeFromFavorites} 
-                  initialIsFavorite={true} 
-                />
+              <MovieCard 
+                movie={movie} 
+                onAddToFavorites={addToFavorites} 
+                onRemoveFromFavorites={removeFromFavorites} 
+                initialIsFavorite={true} 
+              />
+
               </div>
             </Col>
           ))
