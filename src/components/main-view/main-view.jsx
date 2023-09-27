@@ -6,8 +6,11 @@ import { SignupView } from '../signup-view/signup-view';
 import { ProfileView } from '../profile-view/profile-view';
 import { NavigationBar } from '../navigation-bar/navigation-bar';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import SearchBar from '../search-bar/search-bar.jsx';
 import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
+import { Container, Row } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export const MainView = () => {
   const [movies, setMovies] = useState([]);
@@ -28,6 +31,8 @@ export const MainView = () => {
     setToken(null);
   };
 
+  const [searchTerm, setSearchTerm] = useState('');
+
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
     const savedUser = JSON.parse(localStorage.getItem('user'));
@@ -47,7 +52,6 @@ export const MainView = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Fetched movies:",data);
         const moviesFromApi = data.map((doc) => {
           return {
             _id: doc._id,
@@ -60,15 +64,12 @@ export const MainView = () => {
           };
         });
         setMovies(moviesFromApi);
-        console.log("Updated movies:",movies);
       })
 
       .catch(error=>{
         console.error("There was an error fetching the movies:",error)
       });
   },[token]);
-
-  console.log("Current user: ", user);
 
   const logOut = () => {
     setUser(null);
@@ -102,14 +103,11 @@ export const MainView = () => {
       return response.json();
     })
     .then(data => {
-      console.log('Movie added to favorites:', data);
       updateUser(data);
-      console.log('Updated User:', user);
     })
     .catch(error => {
       console.log('Error adding to favorites:', error);
       if (error === 'Movie already in favorites') {
-        // Display an alert or some other kind of user feedback
         alert('This movie is already in your favorites!');
       }
     });
@@ -124,14 +122,15 @@ export const MainView = () => {
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Movie removed from favorites:', data);
       updateUser(data);
-      console.log('Updated User:', user);
     })
     .catch(error => {
       console.log('Error removing from favorites:', error);
     });
 };
+    const handleSearch = term => {
+      setSearchTerm(term);
+    };
 
     return (
       <BrowserRouter>
@@ -139,62 +138,76 @@ export const MainView = () => {
           user={user}
           onLoggedOut={logOut}
         />
-        <Row className="justify-content-md-center">
-          <Routes>
-            <Route
-              path="/signup"
-              element={
-                user ? <Navigate to="/" /> : <Col md={5}><SignupView /></Col>
-              }
-            />
-            <Route
-              path="/login"
-              element={
-                user ? <Navigate to="/" /> : <Col md={5}><LoginView onLoggedIn={handleLogin} /></Col>
-              }
-            />
-            <Route
-              path="/movies/:movieId"
-              element={
-                !user ? <Navigate to="/login" replace />
-                : movies.length === 0 ? <Col>No movies available!</Col>
-                : <Col md={8}><MovieView movies={movies} /></Col>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                !user ? <Navigate to="/login" replace />
-                : <Col md={8}>
-                  {user && user.favoriteMovies ?
-                    <ProfileView user={user} movies={movies} token={token} updateUser={updateUser} deleteUser={deleteUser} />
-                    : <div>Loading...</div>}
-                </Col>
-              }
-            />
-            <Route
-              path="/"
-              element={
-                !user ? <Navigate to="/login" replace />
-                : movies.length === 0 ? <Col>No movies available!</Col>
-                : (
-                  <>
-                    {movies.map(movie => (
-                      <Col md={3} key={movie._id}>
-                        <MovieCard
-                          movie={movie}
-                          onAddToFavorites={addToFavorites}
-                          onRemoveFromFavorites={removeFromFavorites}
-                          initialIsFavorite={user.favoriteMovies ? user.favoriteMovies.includes(movie._id) : false}
-                        />
+        <Container>
+          <Row className="justify-content-md-center">
+            <Routes>
+              <Route
+                path="/signup"
+                element={
+                  user ? <Navigate to="/" /> : <Col md={5}><SignupView /></Col>
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  user ? <Navigate to="/" /> : <Col md={5}><LoginView onLoggedIn={handleLogin} /></Col>
+                }
+              />
+              <Route
+                path="/movies/:movieId"
+                element={
+                  !user ? <Navigate to="/login" replace />
+                  : movies.length === 0 ? <Col>No movies available!</Col>
+                  : <MovieView
+                      movies={movies}
+                      onAddToFavorites={addToFavorites}
+                      onRemoveFromFavorites={removeFromFavorites}
+                      favoriteMovies={user.favoriteMovies}
+                    />
+                }
+              />
+
+              <Route
+                path="/profile"
+                element={
+                  !user ? <Navigate to="/login" replace />
+                  : <Col md={8}>
+                    {user && user.favoriteMovies ?
+                      <ProfileView user={user} movies={movies} token={token} updateUser={updateUser} deleteUser={deleteUser} />
+                      : <div>Loading...</div>}
+                  </Col>
+                }
+              />
+              <Route
+                path="/"
+                element={
+                  !user ? <Navigate to="/login" replace />
+                  : movies.length === 0 ? <Col>No movies available!</Col>
+                  : (
+                    <>
+                       <Col md={12}>
+                          <SearchBar onSearch={handleSearch} />
                       </Col>
-                    ))}
-                  </>
-                )
-              }
-            />
-          </Routes>
-        </Row>
+
+                      {movies.filter(movie => 
+                          movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+                      ).map(movie => (
+                        <Col md={3} key={movie._id}>
+                          <MovieCard
+                              movie={movie}
+                              onAddToFavorites={addToFavorites}
+                              onRemoveFromFavorites={removeFromFavorites}
+                              initialIsFavorite={user.favoriteMovies ? user.favoriteMovies.includes(movie._id) : false}
+                          />
+                    </Col>
+                      ))}
+                    </>
+                  )
+                }
+              />
+            </Routes>
+          </Row>
+        </Container>
       </BrowserRouter>
     );
 }

@@ -1,36 +1,49 @@
-import  { Navbar, Container, Nav } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Navbar, Nav } from "react-bootstrap";
+import { NavLink, useMatch, useLocation  } from "react-router-dom";
 
 export const NavigationBar = ({ user, onLoggedOut }) => {
-    return(
-        <Navbar bg="light" expand="lg">
-            <Container>
-                <Navbar.Brand as ={Link} to="/">
-                    Movie app
-                </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="me-auto">
-                        <Nav.Link as={Link} to="/">Home</Nav.Link>
+    const match = useMatch("/");
+    const location = useLocation();
+    const isOnLoginPage = location.pathname === '/login' || location.pathname === '/signup';
 
-                        {user ? (
-                            <>
-                                <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
-                                <Nav.Link onClick={() => {
-                                    console.log('Logout clicked');
-                                    onLoggedOut();
-                                }}>Logout</Nav.Link>
+    if (isOnLoginPage) {
+        return null;
+    }
 
-                            </>
-                        ) : (
-                            <>
-                                <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                                <Nav.Link as={Link} to="/signup">Sign Up</Nav.Link>
-                            </>
-                        )}
+    return (
+        <Navbar bg="light" expand="lg" style={{ width: '100%', backgroundColor: '#87cefa' }}>
+            <Navbar.Brand as={NavLink} to="/">
+                myFlix
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="me-auto">
+                    <NavLink 
+                        to="/" 
+                        className={`nav-link ${match ? 'font-weight-bold' : ''}`}
+                    >
+                        Home
+                    </NavLink>
+
+                    {user && (
+                        <NavLink to="/profile" className="nav-link">Profile</NavLink>
+                    )}
+                </Nav>
+                {user ? (
+                    <Nav className="ml-auto">
+                        <Nav.Link onClick={() => {
+                            onLoggedOut();
+                        }}>Logout</Nav.Link>
                     </Nav>
-                </Navbar.Collapse>
-            </Container>
+                ) : (
+                    <Nav className="ml-auto">
+                        <NavLink to="/login" className="nav-link">Login</NavLink>
+                        <NavLink to="/signup" className="nav-link">Sign Up</NavLink>
+                    </Nav>
+                )}
+            </Navbar.Collapse>
         </Navbar>
-    )
+    );
 }
+
+

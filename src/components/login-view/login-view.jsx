@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
-import { Button, Form, Col } from "react-bootstrap";
+import { Button, Form, Col, Container, Row } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 
+
 export const LoginView = ({ onLoggedIn }) => {
   const navigate = useNavigate();
-  console.log("navigate function: ", navigate);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -34,7 +34,6 @@ export const LoginView = ({ onLoggedIn }) => {
     })
     .then(response => response.json())
     .then(data => {
-      console.log("Login response: ",data);
       if (data.user && data.token) {
         if(!data.user.FavouriteMovies) {
           data.user.FavouriteMovies = [];
@@ -51,41 +50,51 @@ export const LoginView = ({ onLoggedIn }) => {
   };
 
   const goToSignup = () => {
-    console.log("Navigating to Signup");
     navigate('/signup');
   };
   
 
   return (
-    <Col md={5}>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formUsername">
-          <Form.Label>Username:</Form.Label>
-          <Form.Control
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            minLength="3"
-          />
-        </Form.Group>
-        <Form.Group controlId="formPassword">
-          <Form.Label>Password:</Form.Label>
-          <Form.Control
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-      </Form>
-      <p>You don't have an account?
-        <Button variant="link" onClick={goToSignup}> Signup here </Button>
-      </p>
-    </Col>
+    <Container className="d-flex vh-100">
+      <Row className="m-auto">
+        <Col md={12} className="bg-white p-4 rounded shadow-sm text-center">
+        <div className="mb-4 text-start">  {/* Aggiunta la classe text-start */}
+            <p className="mb-2" style={{ fontSize: '1rem' }}>Welcome to</p>
+            <p style={{ fontSize: '4rem', fontWeight: 'bold', margin: '0.5rem 0' }}>myFlix</p>
+        </div>
+            <Form onSubmit={handleSubmit} className="mb-3">
+              <Form.Group controlId="formUsername" className="mb-3">
+                <Form.Control
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Username"
+                  required
+                  minLength="3"
+                />
+              </Form.Group>
+              <Form.Group controlId="formPassword" className="mb-3">
+                <Form.Control
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="Password"
+                />
+              </Form.Group>
+              <div className="d-flex justify-content-end">
+                <Button variant="primary" type="submit">
+                  Login
+                </Button>
+              </div>
+            </Form>
+            <p className="text-center mt-3">
+              <Link to="/signup" className="text-primary">Don't have an account?</Link>
+            </p>
+          </Col>
+        </Row>
+    </Container>
+
   );
 };
 

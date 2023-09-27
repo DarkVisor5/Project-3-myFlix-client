@@ -1,7 +1,58 @@
+// movie-view.scss
+.container-fluid {
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.movie-view-row {
+  margin-top: 20px;
+}
+
+.text-column {
+  padding-right: 20px; // creates some space between text and image
+}
+
+.movie-title {
+  font-size: 3em;
+}
+
+.director-and-genre {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.movie-director {
+  font-size: 2em;
+}
+
+.movie-genre {
+  font-size: 2em;
+  position: relative;
+  left: 50%; // positions genre text closer to the image
+  transform: translateX(-50%); // centers genre text
+}
+
+.movie-description {
+  font-size: 1.5em;
+  margin-top: 10px;
+}
+
+.image-column {
+  display: flex;
+  align-items: flex-start; // aligns image to the top of the column
+  justify-content: flex-end; // pushes image to the right
+}
+
+.movie-image {
+  max-width: 100%;
+  max-height: 50vh; // limits height to a quarter of the screen
+  object-fit: cover;
+}
+
 .back-button {
-    padding: 4px 12px 4px 12px;
-    color: whitesmoke;
-    background-color: dodgerblue;
-    border: none;
-    border-radius: 4px;
-  }
+  margin-top: 10px;
+}
+
+

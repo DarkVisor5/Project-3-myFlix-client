@@ -1,0 +1,21 @@
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;  /* Adjust this value to add space */
+    width: 100%;
+}
+
+
+.custom-search-bar {
+    width: 30%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.custom-search-bar:focus {
+    border-color: #66afe9;
+    outline: none;
+}

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
+import { Container, Col, Form, Button, Row } from 'react-bootstrap';
 import { MovieCard } from '../movie-card/movie-card';
+import { Link } from 'react-router-dom'; 
+
 
 export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => {
 
-  console.log("Props received by ProfileView:", { user, movies, token });
+  const BASE_URL = 'https://testmovieapi.onrender.com/users/';
 
   const [username, setUsername] = useState(user.username);
   const [password, setPassword] = useState('');
@@ -16,9 +15,7 @@ export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => 
   const favoriteMovies = user && user.favoriteMovies
   ? movies.filter((m) => user.favoriteMovies.includes(m._id))
   : [];
-  console.log('Computed favoriteMovies:', favoriteMovies);
 
-  // Add this useEffect in your ProfileView component
   useEffect(() => {
     if (!token || !user?.username) return;
 
@@ -27,7 +24,6 @@ export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => 
     })
     .then((response) => response.json())
     .then((data) => {
-      console.log('Fetched user data:', data);
       updateUser(data);
       localStorage.setItem('user', JSON.stringify(data));
     })
@@ -54,9 +50,7 @@ export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => 
     })
     .then(response => response.json())
     .then(data => {
-      console.log('User updated:', data);
       
-    
       fetch(`https://testmovieapi.onrender.com/users/${user.username}`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -64,7 +58,6 @@ export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => 
       })
       .then(response => response.json())
       .then(completeUserData => {
-        console.log('Complete user data:', completeUserData);
         updateUser(completeUserData);
       });
     })
@@ -80,15 +73,14 @@ export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => 
         }
       })
       .then(() => {
-        console.log('Account deleted');
         deleteUser();
       })
       .catch(error => console.log('Error deleting account:', error));
     }
   };
   
-  const addToFavorites = (movieTitle) => {
-    fetch(`https://testmovieapi.onrender.com/users/${user.username}/movies/${movieTitle}`, {
+  const addToFavorites = (movieId) => {
+    fetch(`${BASE_URL}${user.username}/movies/${movieId}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -96,16 +88,13 @@ export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => 
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Movie added to favorites:', data);
       updateUser(data);
     })
     .catch(error => console.log('Error adding to favorites:', error));
   };
 
-  console.log("Current favoriteMovies:", favoriteMovies);
-
-  const removeFromFavorites = (movieTitle) => {
-    fetch(`https://testmovieapi.onrender.com/users/${user.username}/movies/${encodeURIComponent(movieTitle)}`, {
+  const removeFromFavorites = (movieId) => {
+    fetch(`${BASE_URL}${user.username}/movies/${encodeURIComponent(movieId)}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -113,60 +102,82 @@ export const ProfileView = ({ user, movies, token, updateUser, deleteUser }) => 
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Movie removed from favorites:', data);
       updateUser(data);
     })
     .catch(error => console.log('Error removing from favorites:', error));
   };  
 
   return (
-    <Col md={8}>
-      <h1>Your Profile</h1>
-      <Form>
-        <Form.Group controlId="formUsername">
-          <Form.Label>Username</Form.Label>
-          <Form.Control type="text" value={username} onChange={e => setUsername(e.target.value)} />
-        </Form.Group>
-  
-        <Form.Group controlId="formPassword">
-          <Form.Label>Password</Form.Label>
-          <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} />
-        </Form.Group>
-  
-        <Form.Group controlId="formEmail">
-          <Form.Label>Email</Form.Label>
-          <Form.Control type="email" value={email} onChange={e => setEmail(e.target.value)} />
-        </Form.Group>
-  
-        <Form.Group controlId="formDob">
-          <Form.Label>Date of Birth</Form.Label>
-          <Form.Control type="date" value={dob} onChange={e => setDob(e.target.value)} />
-        </Form.Group>
-  
-        <Button variant="primary" onClick={handleUpdate}>Update</Button>
-        <Button variant="danger" onClick={handleDelete}>Delete Account</Button>
-      </Form>
-      
-      <h2>Your Favorite Movies</h2>
-      <Row>
-        {favoriteMovies.length > 0 ? (
-          favoriteMovies.map((movie) => (
-            <Col xs={6} md={4} lg={3} key={movie._id}> 
-              <div style={{ height: '300px', overflowY: 'auto' }}>
-              <MovieCard 
-                movie={movie} 
-                onAddToFavorites={addToFavorites} 
-                onRemoveFromFavorites={removeFromFavorites} 
-                initialIsFavorite={true} 
+    <Container className="vh-100">
+      <Row className="mb-4">
+        <Col md={12} className="bg-white p-4 rounded shadow-sm text-center">
+        <h1 className="mb-4 text-start">Account Information</h1>
+          <Form className="mb-3 text-start">
+            <Form.Group controlId="formUsername"className="mb-3">
+              <Form.Control 
+                type="text" 
+                value={username} onChange={e => setUsername(e.target.value)} 
+                placeholder="Username"
               />
-
-              </div>
-            </Col>
-          ))
-        ) : (
-          <Col>You have no favorite movies yet.</Col>
-        )}
+            </Form.Group>
+      
+            <Form.Group controlId="formPassword"className="mb-3">
+              <Form.Control type="password" 
+              value={password} onChange={e => setPassword(e.target.value)}
+              placeholder="Password"
+              />
+            </Form.Group>
+      
+            <Form.Group controlId="formEmail"className="mb-3">
+              <Form.Control 
+                type="email" 
+                value={email} onChange={e => setEmail(e.target.value)}
+                placeholder="Email"
+              />
+            </Form.Group>
+      
+            <Form.Group controlId="formDob"className="mb-3">
+              <Form.Control 
+              type="date" 
+              value={dob} onChange={e => setDob(e.target.value)}
+              placeholder="Date of birth"
+              />
+            </Form.Group>
+      
+            <div className="d-flex justify-content-end mb-4">
+              <Button variant="primary" onClick={handleUpdate} className="me-2">
+                Update
+              </Button>
+            </div>
+            <div className="d-flex justify-content-end mt-3">
+              <Link to="/login"  className="text-danger">Delete account permanently</Link>
+            </div>  
+          </Form>
+        </Col>
       </Row>
-  </Col>
+
+      <Row className="no-gutters">
+        <Col md={12}>
+          <h2>Your Favorite Movies</h2>
+          <Row className="no-wrap-row">
+            {favoriteMovies.length > 0 ? (
+              favoriteMovies.map((movie) => (
+                <Col xs={6} md={4} lg={3} className="min-width-col" key={movie._id}>
+                  <MovieCard 
+                    movie={movie} 
+                    onAddToFavorites={addToFavorites} 
+                    onRemoveFromFavorites={removeFromFavorites} 
+                    initialIsFavorite={user.favoriteMovies.includes(movie._id)}
+                    simplified={true}
+                  />
+                </Col>
+              ))
+            ) : (
+              <Col>You have no favorite movies yet.</Col>
+            )}
+          </Row>
+        </Col>
+      </Row>
+    </Container>
   );
-};
+}
