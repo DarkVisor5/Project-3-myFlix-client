@@ -1,5 +1,13 @@
+@import '~bootstrap/scss/bootstrap';
+
 $color: steelblue;
 
 .my-flix {
   color: $color;
+}
+
+.auth-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
 }
