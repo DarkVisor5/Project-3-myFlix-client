@@ -1,3 +1,11 @@
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+import { useState,useEffect } from "react";
+import { MovieCard } from "../movie-card/movie-card";
+import { MovieView } from "../movie-view/movie-view";
+=======
+=======
+>>>>>>> fd1a08dd06cd3887245f0f953e0d0f62190ce288
 import React, { useState, useEffect } from 'react';
 import { MovieCard } from '../movie-card/movie-card';
 import { MovieView } from '../movie-view/movie-view';
@@ -11,6 +19,10 @@ import Col from 'react-bootstrap/Col';
 import { Container, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+<<<<<<< HEAD
+>>>>>>> Stashed changes
+=======
+>>>>>>> fd1a08dd06cd3887245f0f953e0d0f62190ce288
 
 export const MainView = () => {
   const [movies, setMovies] = useState([]);
@@ -26,6 +38,11 @@ export const MainView = () => {
     localStorage.setItem('user', JSON.stringify(updatedUser));
   };
   
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+=======
+=======
+>>>>>>> fd1a08dd06cd3887245f0f953e0d0f62190ce288
   const deleteUser = () => {
     setUser(null);
     setToken(null);
@@ -33,6 +50,10 @@ export const MainView = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
 
+<<<<<<< HEAD
+>>>>>>> Stashed changes
+=======
+>>>>>>> fd1a08dd06cd3887245f0f953e0d0f62190ce288
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
     const savedUser = JSON.parse(localStorage.getItem('user'));
@@ -42,6 +63,11 @@ export const MainView = () => {
     }
     setIsLoading(false);
   }, []);
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+  
+  const [selectedMovies, setSelectedMovies] = useState(null);
+=======
 
   useEffect(() => {
 
@@ -85,6 +111,51 @@ export const MainView = () => {
     setUser(loggedInUser);
     setToken(loggedInToken);
   
+=======
+
+  useEffect(() => {
+
+    if(!token) return;
+
+    fetch("https://testmovieapi.onrender.com/movies",{
+      headers: {Authorization: `Bearer ${token}`}
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const moviesFromApi = data.map((doc) => {
+          return {
+            _id: doc._id,
+            title: doc.title,
+            image_url: doc.image_url,
+            director: doc.director,
+            genre: doc.genre,
+            description: doc.description,
+            featured: doc.featured,
+          };
+        });
+        setMovies(moviesFromApi);
+      })
+
+      .catch(error=>{
+        console.error("There was an error fetching the movies:",error)
+      });
+  },[token]);
+
+  const logOut = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  };
+
+  const handleLogin = (loggedInUser, loggedInToken) => {
+    if (!loggedInUser.favoriteMovies) {
+      loggedInUser.favoriteMovies = [];
+    }
+    setUser(loggedInUser);
+    setToken(loggedInToken);
+  
+>>>>>>> fd1a08dd06cd3887245f0f953e0d0f62190ce288
     localStorage.setItem('token', loggedInToken);
     localStorage.setItem('user', JSON.stringify(loggedInUser));
   };
@@ -131,12 +202,114 @@ export const MainView = () => {
     const handleSearch = term => {
       setSearchTerm(term);
     };
+<<<<<<< HEAD
+>>>>>>> Stashed changes
+=======
+>>>>>>> fd1a08dd06cd3887245f0f953e0d0f62190ce288
 
     return (
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+      <MovieView movie={selectedMovies} onBackClick={() => setSelectedMovies(null)} />
+=======
+=======
+>>>>>>> fd1a08dd06cd3887245f0f953e0d0f62190ce288
       <BrowserRouter>
         <NavigationBar
           user={user}
           onLoggedOut={logOut}
+<<<<<<< HEAD
+        />
+        <Container>
+          <Row className="justify-content-md-center">
+            <Routes>
+              <Route
+                path="/signup"
+                element={
+                  user ? <Navigate to="/" /> : <Col md={5}><SignupView /></Col>
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  user ? <Navigate to="/" /> : <Col md={5}><LoginView onLoggedIn={handleLogin} /></Col>
+                }
+              />
+              <Route
+                path="/movies/:movieId"
+                element={
+                  !user ? <Navigate to="/login" replace />
+                  : movies.length === 0 ? <Col>No movies available!</Col>
+                  : <MovieView
+                      movies={movies}
+                      onAddToFavorites={addToFavorites}
+                      onRemoveFromFavorites={removeFromFavorites}
+                      favoriteMovies={user.favoriteMovies}
+                    />
+                }
+              />
+
+              <Route
+                path="/profile"
+                element={
+                  !user ? <Navigate to="/login" replace />
+                  : <Col md={8}>
+                    {user && user.favoriteMovies ?
+                      <ProfileView user={user} movies={movies} token={token} updateUser={updateUser} deleteUser={deleteUser} />
+                      : <div>Loading...</div>}
+                  </Col>
+                }
+              />
+              <Route
+                path="/"
+                element={
+                  !user ? <Navigate to="/login" replace />
+                  : movies.length === 0 ? <Col>No movies available!</Col>
+                  : (
+                    <>
+                       <Col md={12}>
+                          <SearchBar onSearch={handleSearch} />
+                      </Col>
+
+                      {movies.filter(movie => 
+                          movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+                      ).map(movie => (
+                        <Col md={3} key={movie._id}>
+                          <MovieCard
+                              movie={movie}
+                              onAddToFavorites={addToFavorites}
+                              onRemoveFromFavorites={removeFromFavorites}
+                              initialIsFavorite={user.favoriteMovies ? user.favoriteMovies.includes(movie._id) : false}
+                          />
+                    </Col>
+                      ))}
+                    </>
+                  )
+                }
+              />
+            </Routes>
+          </Row>
+        </Container>
+      </BrowserRouter>
+>>>>>>> Stashed changes
+    );
+  }
+
+  if (movies.length === 0) {
+    return <div>The list is empty!</div>;
+  }
+
+  return (
+    <div>
+      {movies.map((movie) => (
+        <MovieCard
+          key={movie._id}
+          movie={movie}
+          onMovieClick={(newSelectedMovie) => {
+            setSelectedMovies(newSelectedMovie);
+          }}
+=======
+>>>>>>> fd1a08dd06cd3887245f0f953e0d0f62190ce288
         />
         <Container>
           <Row className="justify-content-md-center">
